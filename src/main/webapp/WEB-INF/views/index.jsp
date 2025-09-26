@@ -38,13 +38,15 @@
     </div>
 </nav>
 <!-- Masthead-->
-<header class="masthead">
+<header class="masthead" id="header">
     <div class="container">
         <div class="masthead-subheading">Welcome To Our Studio!</div>
         <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
         <a class="btn btn-primary btn-xl text-uppercase" href="#services">Tell Me More</a>
     </div>
 </header>
+
+
 <!-- Services-->
 <section class="page-section" id="services">
     <div class="container">
@@ -244,50 +246,118 @@
     </div>
 </section>
 <!-- Team-->
-<section class="page-section bg-light" id="team">
+<section class="page-section bg-light" id="board-list">
     <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Our Amazing Team</h2>
-            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="section-heading text-uppercase">게시판</h2>
+            <!-- 글쓰기 버튼 -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#writeModal">
+                글쓰기
+            </button>
         </div>
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="${pageContext.request.contextPath}/assets/img/team/1.jpg" alt="..." />
-                    <h4>Parveen Anand</h4>
-                    <p class="text-muted">Lead Designer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+
+        <!-- 검색 영역 -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <select class="form-select w-auto d-inline">
+                    <option>10줄</option>
+                    <option>20줄</option>
+                    <option>50줄</option>
+                </select>
             </div>
-            <div class="col-lg-4">
-                <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="${pageContext.request.contextPath}/assets/img/team/2.jpg" alt="..." />
-                    <h4>Diana Petersen</h4>
-                    <p class="text-muted">Lead Marketer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="team-member">
-                    <img class="mx-auto rounded-circle" src="${pageContext.request.contextPath}/assets/img/team/3.jpg" alt="..." />
-                    <h4>Larry Parker</h4>
-                    <p class="text-muted">Lead Developer</p>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Twitter Profile"><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+            <div class="col-md-6 text-end">
+                <div class="input-group w-auto d-inline-flex">
+                    <input type="text" class="form-control" placeholder="제목+내용 검색">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p></div>
+
+        <!-- 게시판 테이블 -->
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>번호</th>
+                    <th>분류</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="post" items="${postList}">
+                    <tr>
+                        <td>${post.id}</td>
+                        <td>${post.category}</td>
+                        <td class="text-start">
+                            <a href="${pageContext.request.contextPath}/board/view?id=${post.id}">
+                                    ${post.title}
+                            </a>
+                        </td>
+                        <td>${post.writer}</td>
+                        <td>${post.createdAt}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 페이지네이션 (추가 구현 필요) -->
+        <div class="d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a class="page-link" href="#">«</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                </ul>
+            </nav>
         </div>
     </div>
 </section>
-<!-- Clients-->
+
+<!-- 글쓰기 모달 -->
+<div class="modal fade" id="writeModal" tabindex="-1" aria-labelledby="writeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="${pageContext.request.contextPath}/board/write" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="writeModalLabel">글쓰기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">분류</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="문의">문의</option>
+                            <option value="조언">조언</option>
+                            <option value="응원">응원</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">제목</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="writer" class="form-label">작성자</label>
+                        <input type="text" class="form-control" id="writer" name="writer" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">내용</label>
+                        <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%--<!-- Clients-->
 <div class="py-5">
     <div class="container">
         <div class="row align-items-center">
@@ -305,7 +375,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>--%>
 <!-- Contact-->
 <section class="page-section" id="contact">
     <div class="container">
@@ -598,6 +668,17 @@
         </div>
     </div>
 </div>
+
+<%--<div class="top-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">--%>
+<%--    <a href="http://pf.kakao.com/_xkxiZxcn">--%>
+<%--        <img src="${pageContext.request.contextPath}/assets/img/kakao.png" alt="Top" style="width: 50px; height: 50px; cursor: pointer;" />--%>
+<%--    </a>--%>
+<%--</div>--%>
+
+<a href="javascript:void(0)" onclick="kakaoChatStart();" style="position: fixed; z-index: 999; right: 20px; bottom: 20px;">
+    <img src="${pageContext.request.contextPath}/assets/img/Button_KakaoTalkChat_88.png" width="72" height="72">
+</a>
+
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
@@ -606,6 +687,24 @@
 <!-- * *                               SB Forms JS                               * *-->
 <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+
 <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
+<!-- kakao chat -->
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<!-- 카카오톡 채널 전용 SDK -->
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.channel.min.js" integrity="sha384-8oNFBbAHWVovcMLgR+mLbxqwoucixezSAzniBcjnEoumhfIbMIg4DrVsoiPEtlnt" crossorigin="anonymous"></script>
+
+<script type='text/javascript'>
+   // 카카오톡 채널 1:1채팅 버튼을 생성합니다.
+  function kakaoChatStart() {
+    Kakao.Channel.chat({
+      channelPublicId: '_xkxiZxcn'
+    });
+  }
+
+  //]]>
+</script>
+
 </body>
 </html>
